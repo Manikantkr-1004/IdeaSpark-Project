@@ -22,17 +22,8 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'IdeaSpark - AI Powered Platform',
     description: 'A creativity hub to store ideas + quick AI suggestions',
-    url: '/',
-    type: 'website',
-    images: [
-      {
-        url: '/homepage.png',
-        width: 1200,
-        height: 630,
-        alt: 'IdeaSpark',
-      }
-    ]
-  },
+    images: "/homepage.png"
+  }
 };
 
 export default function RootLayout({
