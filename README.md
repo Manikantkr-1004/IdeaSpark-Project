@@ -3,6 +3,9 @@
 IdeaSpark is a full-stack web application designed to help users generate, organize, validate, and manage ideas efficiently.
 It addresses real-world problems like creative block, scattered idea storage, and lack of structured idea evaluation by combining secure authentication, clean UI, and AI-assisted features.
 
+* https://ideasparkmani.vercel.app
+* https://ideasparkapi.onrender.com
+
 <img style="margin: 0 auto;" width="742" height="464" alt="homepage" src="https://github.com/user-attachments/assets/ccab69ba-1146-4b9a-a613-4deb4474823e" />
 
 ---
@@ -144,7 +147,7 @@ npm run dev
 **Deployment**
 
 * Frontend deployed using Vercel
-* Backend deployed using a Node.js-compatible hosting service
+* Backend deployed using Render (It slow down after unactivity so it may take utpo 1 min when first time API hit)
 
 ---
 
