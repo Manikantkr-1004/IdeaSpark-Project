@@ -3,13 +3,15 @@
 IdeaSpark is a full-stack web application designed to help users generate, organize, validate, and manage ideas efficiently.
 It addresses real-world problems like creative block, scattered idea storage, and lack of structured idea evaluation by combining secure authentication, clean UI, and AI-assisted features.
 
+<img style="margin: 0 auto;" width="742" height="464" alt="homepage" src="https://github.com/user-attachments/assets/ccab69ba-1146-4b9a-a613-4deb4474823e" />
+
 ---
 
 **Tech Stack**
 
 Frontend
 
-* Next.js
+* Next.js with Typescript
 * Context API (State Management)
 * Tailwind CSS
 
@@ -149,5 +151,5 @@ npm run dev
 **Author**
 
 **Manikant Kumar**
-GitHub: [https://github.com/Manikantkr-1004](https://github.com/Manikantkr-1004)
-LinkedIn: [https://www.linkedin.com/in/manikantofficial2023/](https://www.linkedin.com/in/manikantofficial2023/)
+* GitHub: [https://github.com/Manikantkr-1004](https://github.com/Manikantkr-1004)
+* LinkedIn: [https://www.linkedin.com/in/manikantofficial2023/](https://www.linkedin.com/in/manikantofficial2023/)
