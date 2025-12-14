@@ -29,7 +29,7 @@ export default function ComparisionIdeaModal({ data, comparisionModal, setCompar
     const [response, setResponse] = useState<string>('');
 
     const handleChange = (id: string, value: string) => {
-        const newData= formData.map((ele: ComparisionType)=> ele.id===id ? ({...ele, value}): ele);
+        const newData= formData.map((ele: ComparisionType)=> ele.id===id ? ({...ele, content: value}): ele);
         setFormData(newData)
     }
 
