@@ -6,9 +6,8 @@ It addresses real-world problems like creative block, scattered idea storage, an
 * https://ideasparkmani.vercel.app
 * https://ideasparkapi.onrender.com
 
-```
-Our backend is hosted on a free tier Render account, which causes it to spin down after inactivity. This may result in up to a 1-minute delay on the first API call, affecting the frontend load time. Please wait briefly— this is expected behavior and not an issue.
-```
+> [!NOTE]
+> Our backend is hosted on a free tier Render account, which causes it to spin down after inactivity. This may result in up to a 1-minute delay on the first API call, affecting the frontend load time first time only once. Please wait briefly— this is expected behavior and not an issue that's why I have added a Loader to make it smooth and looks good.
 
 <img style="margin: 0 auto;" width="742" height="464" alt="homepage" src="https://github.com/user-attachments/assets/ccab69ba-1146-4b9a-a613-4deb4474823e" />
 
