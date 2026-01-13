@@ -65,7 +65,7 @@ export default function CreateIdeaModal({ createModal, setCreateModal }: CreateI
             <div className="fixed inset-0 flex items-center justify-center z-9999">
 
                 {/* Modal Card */}
-                <div className="bg-white p-4 rounded-xl shadow-2xl w-full max-h-screen sm:max-h-[90%] sm:max-w-100 border border-slate-300 overflow-y-auto">
+                <div className="bg-white p-4 rounded-xl shadow-2xl w-[98%] max-h-screen sm:max-h-[90%] sm:max-w-100 border border-slate-300 overflow-y-auto">
 
                     <h2 className="text-lg text-(--dark-color) text-center font-semibold">✨ Create/Generate New Idea</h2>
 
