@@ -1,11 +1,12 @@
+import "./globals.css";
 import type { Metadata } from "next";
 import {Inter} from "next/font/google";
-import "./globals.css";
 import { Toaster } from "react-hot-toast";
 import Navbar from "./ui/Navbar";
 import dynamic from "next/dynamic";
-import { UserProvider } from "./context/UserContext";
-import { ProtectRoutes } from "./authenticate/protectRoutes";
+import { SessionProvider } from "next-auth/react";
+import { TanstackProviders } from "./tanstackProviders";
+import GoogleOneTap from "./ui/GoogleOneTap";
 const Footer = dynamic(() => import("./ui/Footer"));
 
 const inter = Inter({
@@ -33,14 +34,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <meta name="google-signin-use_fedcm" content="true" />
       <body className={`antialiased ${inter.className}`} >
-        <UserProvider>
-          <ProtectRoutes>
+        <SessionProvider>
+          <TanstackProviders>
             <Navbar />
               {children}
             <Footer />
-          </ProtectRoutes>
-        </UserProvider>
+            <GoogleOneTap />
+          </TanstackProviders>
+        </SessionProvider>
         <Toaster position="bottom-center" reverseOrder={false} />
       </body>
     </html>

@@ -1,17 +1,20 @@
 'use client';
 import Link from 'next/link';
 import { useContext } from 'react';
-import { UserContext } from '@/app/context/UserContext';
+// import { UserContext } from '@/app/context/UserContext';
+import { useSession } from "next-auth/react"
 import 'animate.css';
 
 export default function HomeTop() {
 
-    const {user} = useContext(UserContext);
+    // const {user} = useContext(UserContext);
+    const { data: session, status } = useSession();
 
     return (
         <section className='w-full home-bg bg-no-repeat bg-cover bg-fixed px-3 md:px-5 lg:px-10'>
             <div className="fixed-max-width relative m-auto text-center py-16 md:py-28 2xl:py-32 flex flex-col items-center gap-10">
-                {user.isLoggedIn && <p className='text-yellow-400 font-semibold animate-pulse -mb-4 lg:-mb-8 text-center'>👋 <span className="text-white">Welcome,</span> {user.name}</p>}
+                {session?.user && <p className='text-yellow-400 font-semibold animate-pulse -mb-4 lg:-mb-8 text-center'>👋 <span className="text-white">Welcome,</span> {session.user.name}</p>}
+                {/* {session && <pre className='text-sm text-white text-wrap'>{JSON.stringify(session, null, 2)}</pre>} */}
                 <h1 className="text-4xl md:text-6xl lg:text-7xl text-bg font-bold pb-1.5 text-white animate__animated animate__zoomInDown">
                     Transform Raw Thoughts Into Meaningful Ideas
                 </h1>

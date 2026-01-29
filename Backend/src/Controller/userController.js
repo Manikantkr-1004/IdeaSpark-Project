@@ -28,7 +28,7 @@ export const userSignup = async (req, res) => {
             email,
             password: hashPassword,
             secret: hashSecret,
-            profileImg: `https://robohash.org/${name}.svg`
+            image: `https://robohash.org/${name}.svg`
         })
         await newUser.save();
 
@@ -39,9 +39,54 @@ export const userSignup = async (req, res) => {
     }
 }
 
+export const userSocialLogin = async (req, res) => {
+    try {
+        const {name, email, image, provider} = req.body;
+
+        if(!name || !email || !image || !provider) {
+            return res.status(400).json({message: "All fields are required", error: "Fields missing", data: null});
+        }
+        let user = await userModel.findOne({email});
+        if(!user) {
+            // Create new user
+            const hashSecret = await bcrypt.hash(email, parseInt(process.env.SALT_ROUNDS));
+            user = new userModel({
+                name,
+                email,
+                secret: hashSecret,
+                image,
+                loginHistory: [{
+                    date:  new Date(),
+                    provider
+                }]
+            });
+        } else {
+            // Update existing user with social login details
+            user.name = name;
+            user.image = image;
+            user.loginHistory = [{
+                date: new Date(),
+                provider
+            }, ...user.loginHistory]
+        }
+
+        await user.save();
+
+        const token = jwt.sign({authorId: user._id}, process.env.JWT_SECRET, {expiresIn: '7d'});
+
+        res.status(200).json({message: "Social Login successful", error: null, data: {
+            accessToken: token,
+        }});
+    } catch (error) {
+        console.log("Error in userSocialLogin", error);
+        res.status(500).json({message: "Internal Server Error", error: error.message, data: null});
+    }
+}
+
 export const userLogin = async (req, res) => {
     try {
         const {email, password} = req.body;
+
         if(!email || !password) {
             return res.status(400).json({message: "Email and Password are required", error: "Fields missing", data: null});
         }
@@ -52,22 +97,26 @@ export const userLogin = async (req, res) => {
 
         const user = await userModel.findOne({email});
         if(!user) {
-            return res.status(400).json({message: "Invalid email or password", error: "Authentication failed", data: null});
+            return res.status(400).json({message: "Invalid email or password", error: "User not found", data: null});
         }
 
-        const isPasswordValid = await bcrypt.compare(password, user.password);
+        const isPasswordValid = user.password ? await bcrypt.compare(password, user.password) : null;
         if(!isPasswordValid) {
-            return res.status(400).json({message: "Invalid email or password", error: "Authentication failed", data: null});
+            return res.status(400).json({message: `${user.password ? "Invalid email or password" : "Password not set! Forgot Password by secret that is your email."}`, error: "Authentication failed", data: null});
         }
+        
+        await userModel.findOneAndUpdate({email}, {loginHistory: [{
+            date: new Date(),
+            provider: 'credentials'
+        }, ...user.loginHistory]});
 
         const token = jwt.sign({authorId: user._id}, process.env.JWT_SECRET, {expiresIn: '7d'});
 
         res.status(200).json({message: "Login successful", error: null, data: {
             name: user.name,
             email: user.email,
-            profileImg: user.profileImg,
-            createdAt: user.createdAt,
-            token
+            image: user.image,
+            accessToken: token
         }});
     } catch (error) {
         console.log("Error in userLogin", error);

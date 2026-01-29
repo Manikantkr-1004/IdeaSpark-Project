@@ -10,11 +10,11 @@ export const ideaGeneratebyAI = async (prompt) => {
         const response = await axios.post(AI_API, {
             model: "EssentialAI/rnj-1-instruct",
             messages: [
-                {"role": "system", "content": "Respond ONLY as: heading||content. No Markdown, labels, formats, * or extras."},
-                {"role": "user", "content": `Hey, I want you to generate best ideas based on user prompt. You have to give ideas also one heading and heading and ideas content should be seprated by || so that i can extract both as i want. Here is prompt - ${prompt}` }
+                {"role": "system", "content": "Respond ONLY short heading and good idea content seprated by || and Make sure No Markdown, astreik, formats, * and complete sentence."},
+                {"role": "user", "content": `Hey, I want you to generate best ideas based on user prompt. You have to give a short heading and good length completed sentence. Here is prompt - ${prompt}` }
             ],
             max_tokens: 100,
-            temperature: 0.3
+            temperature: 0.5
         }, {
             headers: {
                 "Authorization": `Bearer ${AI_API_KEY}`,

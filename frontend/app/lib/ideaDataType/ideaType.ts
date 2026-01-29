@@ -23,7 +23,7 @@ export interface ideaPublicDataType {
     heading: string,
     content: string,
     category: string,
-    authorId: {name: string, profileImg: string}
+    authorId: {name: string, image: string}
     visibility: string,
     createdAt: string,
     updatedAt: string

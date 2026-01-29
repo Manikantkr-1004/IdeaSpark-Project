@@ -1,6 +1,7 @@
 'use client';
 import { emailValidate } from "@/app/lib/emailValidation";
 import { ResetPasswordDataType, ResponseType } from "@/app/lib/userDataType/userType";
+import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -13,39 +14,43 @@ const initialData: ResetPasswordDataType = {
     newPassword: '',
     secret: ''
 }
-const BACKEND_API = process.env.NEXT_PUBLIC_BACKEND_URL;
 
-export default function AccountResetPassword () {
+export default function AccountResetPassword() {
 
     const [formData, setFormData] = useState(initialData);
-    const [loading, setLoading] = useState<boolean>(false);
     const router = useRouter();
 
+    const { mutate, isPending } = useMutation({
+        mutationFn: async (formData: ResetPasswordDataType) => {
+            const response = await axios.post(
+                `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/forgot-password`,
+                formData
+            );
+            return response.data;
+        },
+        onSuccess: (data: ResponseType) => {
+            toast.success(data?.message || 'Password Reset Successful');
+            router.replace('/account/login');
+        },
+        onError: (error: any) => {
+            console.error('Error in reset password account', error);
+            toast.error(error?.response?.data?.message || 'Internal Server Error');
+        },
+    })
+
     const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-        const {name, value} = event.target;
-        setFormData((prev)=> ({...prev, [name]: value}));
+        const { name, value } = event.target;
+        setFormData((prev) => ({ ...prev, [name]: value }));
     }
 
-    const handleSubmit = async(event: FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
-        if(!emailValidate(formData.email)){
+        if (!emailValidate(formData.email)) {
             return toast.error('Invalid email');
         }
 
-        try {
-            setLoading(true);
-            const response = await axios.post(`${BACKEND_API}/user/forgot-password`, formData);
-            const data: ResponseType = response.data;
-            toast.success(data?.message || 'Signup Successfull');
-            router.replace('/account/login');
-            
-        } catch (error: any) {
-            console.log('Error in register account', error);
-            toast.error(error?.response?.data?.message || 'Internal Server Error')
-        } finally {
-            setLoading(false)
-        }
+        mutate(formData);
     }
 
     return (
@@ -62,7 +67,7 @@ export default function AccountResetPassword () {
                 <label className="flex flex-col gap-1">
                     Enter Secret*
                     <input value={formData.secret} onChange={handleChange} className="w-full border p-1 rounded-md" type="text" minLength={8} name="secret" id="secret" required />
-                    <p className="text-xs">Put secret here that You gave while registering your account.</p>
+                    <p className="text-xs">In case, you haven't set password & secret till now, secret is your email.</p>
                 </label>
 
                 <label className="flex flex-col gap-1">
@@ -70,10 +75,10 @@ export default function AccountResetPassword () {
                     <input value={formData.newPassword} onChange={handleChange} className="w-full border p-1 rounded-md" type="password" minLength={8} name="newPassword" id="newPassword" required />
                 </label>
 
-                <button 
-                disabled={loading}
-                className={`w-full ${loading ? 'cursor-not-allowed bg-(--dark-color)/50' : 'bg-(--dark-color) cursor-pointer'} text-white rounded-md font-bold py-2`} type="submit">
-                    {loading ? <FaSpinner className="animate-spin m-auto" /> : 'Reset Password'}
+                <button
+                    disabled={isPending}
+                    className={`w-full ${isPending ? 'cursor-not-allowed bg-(--dark-color)/50' : 'bg-(--dark-color) cursor-pointer'} text-white rounded-md font-bold py-2`} type="submit">
+                    {isPending ? <FaSpinner className="animate-spin m-auto" /> : 'Reset Password'}
                 </button>
 
                 <p className="text-xs text-center">Have Password? <Link className="text-(--light-color)" href={'/account/login'}>Login now</Link></p>

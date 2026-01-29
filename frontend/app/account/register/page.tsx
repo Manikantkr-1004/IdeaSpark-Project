@@ -1,7 +1,10 @@
 'use client';
 import { emailValidate } from "@/app/lib/emailValidation";
 import { ResponseType, SignupDataType } from "@/app/lib/userDataType/userType";
+import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
+import { signIn } from "next-auth/react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ChangeEvent, FormEvent, useState } from "react";
@@ -14,39 +17,44 @@ const initialData: SignupDataType = {
     password: '',
     secret: ''
 }
-const BACKEND_API = process.env.NEXT_PUBLIC_BACKEND_URL;
 
-export default function AccountRegister () {
+export default function AccountRegister() {
 
     const [formData, setFormData] = useState(initialData);
-    const [loading, setLoading] = useState<boolean>(false);
     const router = useRouter();
 
+    const { mutate, isPending } = useMutation({
+        mutationFn: async (newData: SignupDataType) => {
+            const response = await axios.post(
+                `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/signup`,
+                newData
+            );
+            return response.data;
+        },
+        onSuccess: (data: ResponseType) => {
+            toast.success(data?.message || 'Signup Successful');
+            router.replace('/account/login');
+        },
+        onError: (error: any) => {
+            console.error('Error in register account', error);
+            toast.error(error?.response?.data?.message || 'Internal Server Error');
+        },
+    });
+
     const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-        const {name, value} = event.target;
-        setFormData((prev)=> ({...prev, [name]: value}));
+        const { name, value } = event.target;
+        setFormData((prev) => ({ ...prev, [name]: value }));
     }
 
-    const handleSubmit = async(event: FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
-        if(!emailValidate(formData.email)){
+        if (!emailValidate(formData.email)) {
             return toast.error('Invalid email');
         }
 
-        try {
-            setLoading(true);
-            const response = await axios.post(`${BACKEND_API}/user/signup`, formData);
-            const data: ResponseType = response.data;
-            toast.success(data?.message || 'Signup Successfull');
-            router.replace('/account/login');
-            
-        } catch (error: any) {
-            console.log('Error in register account', error);
-            toast.error(error?.response?.data?.message || 'Internal Server Error')
-        } finally {
-            setLoading(false)
-        }
+        // 2. Trigger the Mutation
+        mutate(formData);
     }
 
     return (
@@ -76,11 +84,22 @@ export default function AccountRegister () {
                     <p className="text-xs">Secret will be used to reset password, incase if you forget your password.</p>
                 </label>
 
-                <button 
-                disabled={loading}
-                className={`w-full ${loading ? 'cursor-not-allowed bg-(--dark-color)/50' : 'bg-(--dark-color) cursor-pointer'} text-white rounded-md font-bold py-2`} type="submit">
-                    {loading ? <FaSpinner className="animate-spin m-auto" /> : 'Signup'}
+                <button
+                    disabled={isPending}
+                    className={`w-full ${isPending ? 'cursor-not-allowed bg-(--dark-color)/50' : 'bg-(--dark-color) cursor-pointer'} text-white rounded-md font-bold py-2`} type="submit">
+                    {isPending ? <FaSpinner className="animate-spin m-auto" /> : 'Signup'}
                 </button>
+
+                <div className="w-full flex justify-between items-center">
+                    <span className="w-[45%] h-px bg-slate-300"></span>
+                    <p className="text-sm">or</p>
+                    <span className="w-[45%] h-px bg-slate-300"></span>
+                </div>
+
+                <div className="w-full flex flex-col gap-2">
+                    <button onClick={() => signIn('google')} type="button" className="w-full border border-slate-700 bg-white hover:bg-(--dark-color) hover:text-white rounded-md font-semibold text-sm py-2 cursor-pointer"><Image src="https://authjs.dev/img/providers/google.svg" alt="Google" width={20} height={20} className="inline mr-2" /> Continue with Google</button>
+                    <button onClick={() => signIn('github')} type="button" className="w-full border border-slate-700 bg-white hover:bg-(--dark-color) hover:text-white rounded-md font-semibold text-sm py-2 cursor-pointer"><Image src="https://authjs.dev/img/providers/github.svg" alt="Github" width={20} height={20} className="inline mr-2" /> Continue with Github</button>
+                </div>
 
                 <p className="text-xs text-center">Already Account? <Link className="text-(--light-color)" href={'/account/login'}>Login now</Link></p>
 

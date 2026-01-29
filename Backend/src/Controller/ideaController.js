@@ -84,7 +84,7 @@ export const getIdeas = async (req, res) => {
         if(heading) filter.heading = { $regex: `${heading}`, $options: 'i' };
         if(category) filter.category = { $regex: `${category}`, $options: 'i' };
 
-        const ideas = await ideaModel.find(filter).sort({ updatedAt: -1 }).populate("authorId", "name profileImg -_id");
+        const ideas = await ideaModel.find(filter).sort({ updatedAt: -1 }).populate("authorId", "name image -_id");
         res.status(200).json({ message: "Ideas fetched successfully", error: null, data: ideas });
     } catch (error) {
         console.log("Error in fetching ideas", error);

@@ -3,7 +3,9 @@ import { userModel } from '../Model/userModel.js';
 
 export const userAuthenticate = async (req, res, next) => {
     try {
+        // headers token or next auth cookie token
         const token = req.headers.authorization?.split(" ")[1];
+        
         if (!token) {
             return res.status(401).json({message: "Token is missing, Please login", error: "Unauthorized", data: null});
         }
@@ -17,8 +19,8 @@ export const userAuthenticate = async (req, res, next) => {
         if (!userExist) {
             return res.status(401).json({message: "User does not exist, Please signup", error: "Unauthorized", data: null});
         }
-        
-        req.body = { authorId: decoded.authorId, ...req.body}
+
+        req.body = { authorId: userExist._id, ...req.body}
         next();
     } catch (error) {
         console.log("Error in userAuthentication", error);

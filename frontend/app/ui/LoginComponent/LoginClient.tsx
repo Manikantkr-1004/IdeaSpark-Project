@@ -1,11 +1,11 @@
 'use client';
-import { UserContext } from "@/app/context/UserContext";
 import { emailValidate } from "@/app/lib/emailValidation";
-import { LoginDataType, ResponseType } from "@/app/lib/userDataType/userType";
-import axios from "axios";
+import { LoginDataType } from "@/app/lib/userDataType/userType";
+import { signIn } from "next-auth/react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ChangeEvent, FormEvent, useContext, useState } from "react";
+import { ChangeEvent, FormEvent, useState } from "react";
 import toast from "react-hot-toast";
 import { FaSpinner } from "react-icons/fa";
 
@@ -20,7 +20,6 @@ export default function LoginClient() {
 
     const [formData, setFormData] = useState(initialData);
     const [loading, setLoading] = useState<boolean>(false);
-    const { handleLogin } = useContext(UserContext);
 
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -40,14 +39,22 @@ export default function LoginClient() {
 
         try {
             setLoading(true);
-            const response = await axios.post(`${BACKEND_API}/user/login`, formData);
-            const data: ResponseType = response.data;
-            toast.success(`Welcome Back, ${data?.data?.name}` || 'Signup Successfull');
-            handleLogin({...data?.data, isLoggedIn: true})
-            router.replace(navigate ? `${navigate}` : '/');
+            const response = await signIn('credentials', {
+                redirect: false,
+                email: formData.email,
+                password: formData.password,
+            });
+            
+            if (!response?.error) {
+                toast.success('Login successful!');
+                router.replace(navigate ? `${navigate}` : '/');
+            } else {
+                toast.error('Login failed');
+                toast.error('Try to Forgot Password if you have not set password yet or just forgot password.', { duration: 8000 });
+            }
             
         } catch (error: any) {
-            console.log('Error in register account', error);
+            console.log('Error in login account', error);
             toast.error(error?.response?.data?.message || 'Internal Server Error')
         } finally {
             setLoading(false)
@@ -76,6 +83,17 @@ export default function LoginClient() {
                     className={`w-full ${loading ? 'cursor-not-allowed bg-(--dark-color)/50' : 'bg-(--dark-color) cursor-pointer'} text-white rounded-md font-bold py-2`} type="submit">
                     {loading ? <FaSpinner className="animate-spin m-auto" /> : 'Login'}
                 </button>
+
+                <div className="w-full flex justify-between items-center">
+                    <span className="w-[45%] h-px bg-slate-300"></span>
+                    <p className="text-sm">or</p>
+                    <span className="w-[45%] h-px bg-slate-300"></span>
+                </div>
+                
+                <div className="w-full flex flex-col gap-2">
+                    <button onClick={()=> signIn('google')} type="button" className="w-full border border-slate-700 bg-white hover:bg-white/80 rounded-md font-semibold text-sm py-2 cursor-pointer"><Image src="https://authjs.dev/img/providers/google.svg" alt="Google" width={20} height={20} className="inline mr-2" /> Continue with Google</button>
+                    <button onClick={()=> signIn('github')} type="button" className="w-full border border-slate-700 bg-white hover:bg-white/80 rounded-md font-semibold text-sm py-2 cursor-pointer"><Image src="https://authjs.dev/img/providers/github.svg" alt="Github" width={20} height={20} className="inline mr-2" /> Continue with Github</button>
+                </div>
 
                 <p className="text-xs text-center">Have not account? <Link className="text-(--light-color)" href={'/account/register'}>Register now</Link></p>
 

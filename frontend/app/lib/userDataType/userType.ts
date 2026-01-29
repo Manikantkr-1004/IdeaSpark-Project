@@ -5,6 +5,21 @@ export interface ResponseType {
     data: any
 }
 
+export type LoginHistoryType = {
+    _id: string,
+    date: string,
+    provider: 'credentials' | 'google' | 'github'
+}
+
+export interface ProfileDataType {
+    _id: string,
+    name: string,
+    email: string,
+    image: string,
+    createdAt: string,
+    loginHistory : LoginHistoryType[]
+}
+
 export interface SignupDataType {
     name: string,
     email: string,
