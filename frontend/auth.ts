@@ -39,19 +39,13 @@ export const authConfig: NextAuthConfig = {
           if (!payload) return null;
 
           // ✅ payload = { sub, email, name, picture }
-          const response = await axios.post(`${process.env.BACKEND_URL}/user/socialogin`, {
-            email: payload.email,
-            name: payload.name,
-            image: payload.picture,
-            provider: "google",
-          });
 
           return {
             id: payload.sub,
             name: payload.name,
             email: payload.email,
             image: payload.picture,
-            accessToken: response.data.data.accessToken
+            accessToken: ''
           };
         } catch (error) {
           console.log('One Tap verify error:', error);
@@ -91,7 +85,7 @@ export const authConfig: NextAuthConfig = {
           email: user.email,
           name: user.name,
           image: user.image,
-          provider: account?.provider,  // "google" or "github"
+          provider: account?.provider=== 'google-one-tap' ? 'google' : account?.provider,  // "google" or "github" or "google-one-tap"
         });
         const accessToken = response.data.data.accessToken;
         token.id = user.id;

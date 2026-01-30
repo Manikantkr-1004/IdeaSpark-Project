@@ -6,7 +6,7 @@ import ComparisionIdeaModal from "@/app/ui/Modals/comparisionIdea";
 import CreateIdeaModal from "@/app/ui/Modals/createIdea";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import { toPng } from "html-to-image";
+import { domToPng } from 'modern-screenshot';
 import { useSession } from "next-auth/react";
 import { useCallback, useRef, useState } from "react";
 import toast from "react-hot-toast";
@@ -108,7 +108,7 @@ export default function UserIdeas() {
 
     const updateIdeaData = (name: string, value: string, id: string) => {
         queryClient.setQueryData(['user-ideas', session?.user.accessToken], (old: ideaDataType[] | undefined) =>
-            old?.map((ele) => ele._id === id ? { ...ele, [name]: value } : ele ) || []
+            old?.map((ele) => ele._id === id ? { ...ele, [name]: value } : ele) || []
         );
     };
 
@@ -128,18 +128,31 @@ export default function UserIdeas() {
         return checkExist ? true : false;
     }
 
-    const handleDownloadImage = useCallback((id: string) => {
-            const ref = divRefs.current[id];
-            if (!ref) return;
-    
-            toPng(ref, { cacheBust: true })
-                .then((dataUrl) => {
-                    const link = document.createElement('a');
-                    link.download = `idea-${id}.png`;
-                    link.href = dataUrl;
-                    link.click();
-                })
-        }, []);
+    const handleDownloadImage = useCallback(async (id: string) => {
+        const ref = divRefs.current[id];
+        if (!ref) return;
+
+        try {
+            const dataUrl = await domToPng(ref, {
+                quality: 1,
+                scale: 2,
+                fetch: {
+                    requestInit: {
+                        cache: 'force-cache' // Cache resources for faster subsequent captures
+                        }
+                    }
+            });
+
+            const link = document.createElement('a');
+            link.download = `idea-${id}.png`;
+            link.href = dataUrl;
+            link.click();
+            toast.success("Image Downloaded Successfully!")
+        } catch (error) {
+            toast.error('Something went wrong, Try again!')
+            console.error('Failed to generate image:', error);
+        }
+    }, []);
 
 
     return (
@@ -159,7 +172,7 @@ export default function UserIdeas() {
                             className="w-[45%] sm:w-[30%] xl:w-[18%] bg-white border border-slate-300 p-1.5 rounded-md" placeholder="Search by Category" type="search" name="category" id="category" />
                         <button
                             disabled={aiComparision || fetchLoading || isFetching || updateLoading || deleteLoading}
-                            onClick={()=> refetch()}
+                            onClick={() => refetch()}
                             className={`w-[98%] sm:w-[30%] xl:w-[18%] py-1.5 px-3 font-semibold text-white rounded-md ${(aiComparision || fetchLoading) ? 'bg-(--dark-color)/50 cursor-not-allowed' : 'bg-(--dark-color) cursor-pointer'}`}>
                             {fetchLoading ? '...' : 'Search'}
                         </button>
@@ -172,7 +185,7 @@ export default function UserIdeas() {
                         </div>
                         {aiComparision &&
                             <button
-                                disabled={fetchLoading  || isFetching || updateLoading || deleteLoading || data.length !== 2}
+                                disabled={fetchLoading || isFetching || updateLoading || deleteLoading || data.length !== 2}
                                 onClick={() => setComparisionModal(true)}
                                 className={`w-[45%] sm:w-auto xl:w-[18%] py-1.5 px-3 text-sm sm:text-[16px] font-semibold text-white rounded-md ${(fetchLoading || data.length !== 2) ? 'bg-(--dark-color)/50 cursor-not-allowed' : 'bg-(--dark-color) cursor-pointer'}`}>✨ Compare</button>
                         }
@@ -201,14 +214,14 @@ export default function UserIdeas() {
                         )
                     }
 
-                    {!fetchLoading && !isFetching && !updateLoading && !deleteLoading && (ideaData ? ideaData.length>0 : false) &&
+                    {!fetchLoading && !isFetching && !updateLoading && !deleteLoading && (ideaData ? ideaData.length > 0 : false) &&
                         <div className="w-full mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
                             {
                                 ideaData?.map((ele: ideaDataType) => (
-                                    <div 
-                                    ref={(el) => { divRefs.current[ele._id] = el; }}
-                                    key={ele._id} 
-                                    className="p-2 animate__animated animate__zoomIn self-start border border-dashed border-(--light-color) bg-[rgb(255,210,249)] rounded-md">
+                                    <div
+                                        ref={(el) => { divRefs.current[ele._id] = el; }}
+                                        key={ele._id}
+                                        className="p-2 animate__animated animate__zoomIn self-start border border-dashed border-(--light-color) bg-[rgb(255,210,249)] rounded-md">
                                         <input
                                             disabled={aiComparision || fetchLoading}
                                             onChange={(e) => updateIdeaData('heading', e.target.value, ele._id)}
@@ -255,10 +268,10 @@ export default function UserIdeas() {
                                                 className={`px-5 ${(aiComparision || fetchLoading) ? 'bg-red-500/50 cursor-not-allowed' : 'bg-red-500 cursor-pointer'} py-2 rounded-md text-sm text-white`}>
                                                 <FaTrash />
                                             </button>
-                                            <button 
+                                            <button
                                                 disabled={fetchLoading}
-                                                onClick={()=> handleDownloadImage(ele._id)} 
-                                                title="Download as Image" 
+                                                onClick={() => handleDownloadImage(ele._id)}
+                                                title="Download as Image"
                                                 className="text-2xl hover:text-(--dark-color) cursor-pointer">
                                                 <FaFileImage />
                                             </button>

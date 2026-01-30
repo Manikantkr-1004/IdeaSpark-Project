@@ -10,7 +10,8 @@ import { TbMoodEmptyFilled } from "react-icons/tb";
 import { ideaPublicDataType } from "../lib/ideaDataType/ideaType";
 import Image from "next/image";
 import { useQuery } from "@tanstack/react-query";
-import { toPng } from "html-to-image";
+import { domToPng } from 'modern-screenshot';
+import toast from "react-hot-toast";
 
 export default function PublicIdeas() {
 
@@ -50,17 +51,30 @@ export default function PublicIdeas() {
         return checkExist ? true : false;
     }
 
-    const handleDownloadImage = useCallback((id: string) => {
+    const handleDownloadImage = useCallback(async (id: string) => {
         const ref = divRefs.current[id];
         if (!ref) return;
 
-        toPng(ref, { cacheBust: true })
-            .then((dataUrl) => {
-                const link = document.createElement('a');
-                link.download = `idea-${id}.png`;
-                link.href = dataUrl;
-                link.click();
-            })
+        try {
+            const dataUrl = await domToPng(ref, {
+                quality: 1,
+                scale: 2,
+                fetch: {
+                    requestInit: {
+                        cache: 'force-cache' // Cache resources for faster subsequent captures
+                        }
+                    }
+            });
+
+            const link = document.createElement('a');
+            link.download = `idea-${id}.png`;
+            link.href = dataUrl;
+            link.click();
+            toast.success('Image Downloaded Successfully!')
+        } catch (error) {
+            toast.error("Something went wrong, Try again");
+            console.error('Failed to generate image:', error);
+        }
     }, []);
 
 
@@ -130,7 +144,7 @@ export default function PublicIdeas() {
                                         <p className="text-slate-700 text-sm whitespace-pre-wrap">{ele.content}</p>
                                         <div className="w-full flex justify-start items-center gap-5">
                                             <p className="bg-white border border-slate-300 py-1 px-3 text-sm rounded-full">{ele.category}</p>
-                                            <button onClick={()=> handleDownloadImage(ele._id)} title="Download as Image" className="text-xl hover:text-(--dark-color) cursor-pointer"><FaFileImage /></button>
+                                            <button onClick={() => handleDownloadImage(ele._id)} title="Download as Image" className="text-xl hover:text-(--dark-color) cursor-pointer"><FaFileImage /></button>
                                         </div>
                                         <div className="flex items-center justify-between gap-4 text-sm mt-2">
                                             <p className="flex items-center gap-1"><IoIosTime /> {ele.createdAt.split('T')[0]}</p>

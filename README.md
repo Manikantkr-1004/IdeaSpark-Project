@@ -39,8 +39,7 @@ AI Integration (HuggingFace API - Free Tier - Short Prompt Usage)
 
 * User Authentication (Signup & Login via Google/Github, Google One Tap Login, Forgot Password)
 * Secure NextAuth & JWT-based authentication
-* Protected Routes for authenticated users
-* Create, Read, Update, Delete (CRUD) Ideas
+* CRUD operations with Ideas
 * Download Ideas that you loved as Image too
 * AI-powered Idea Generation with raw thoughts
 * AI-powered Idea Comparision with 2 ideas

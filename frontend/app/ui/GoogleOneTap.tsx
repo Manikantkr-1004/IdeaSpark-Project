@@ -3,6 +3,7 @@ import { signIn, useSession } from "next-auth/react";
 import toast from "react-hot-toast";
 import Script from "next/script";
 import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 declare global {
   interface Window {
@@ -22,6 +23,7 @@ declare global {
 export default function GoogleOneTap() {
 
   const { data: session, status } = useSession();
+  const router = useRouter();
 
   useEffect(() => {
     let id = null;
@@ -46,6 +48,10 @@ export default function GoogleOneTap() {
     });
     if (result?.error) {
       toast.error("Google One Tap sign-in failed.");
+    }
+    if(result?.ok){
+      toast.success("Login Successful!");
+      router.replace('/');
     }
   };
 
