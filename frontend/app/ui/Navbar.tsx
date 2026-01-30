@@ -1,14 +1,12 @@
 'use client';
 import Image from "next/image";
 import Link from "next/link";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { CiMenuKebab } from "react-icons/ci";
-// import { UserContext } from "../context/UserContext";
 import { signOut, useSession } from "next-auth/react"
 
 export default function Navbar() {
 
-    // const { user, handleLogout } = useContext(UserContext);
     const { data: session, status } = useSession();
     const user = session?.user ;
 

@@ -19,6 +19,11 @@ export const authConfig: NextAuthConfig = {
     // ✅ NEW: Google One Tap (separate provider)
     Credentials({
       id: "google-one-tap",
+      name: "Google One Tap",
+      type: "credentials",
+      credentials: {
+        credential: { label: "Google Token", type: "text" }
+      },
       async authorize(credentials) {
         try {
           const token = credentials.credential as string;

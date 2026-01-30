@@ -11,7 +11,7 @@ const aboutData: AboutItem[] = [
     title: "⚡Organize Ideas",
     points: [
       "Keep all your ideas in one place with our intuitive system. Create, edit, and categorize your ideas effortlessly.",
-      "Generate ideas with your raw thoughts by using AI.",
+      "Export as PDF / PNG Image your best ideas that you love", 
       "You can take AI help to choose best ideas by selecting 2 ideas.",
       "Set Visibility - public so that anyone can see. By default it's private."
     ],

@@ -69,7 +69,7 @@ export default function HomeReviews() {
             <div className="fixed-max-width m-auto py-8 md:py-14 2xl:py-16">
                 <h2 className="text-3xl font-bold mb-10 text-center text-white">⭐ Public Reviews ⭐</h2>
 
-                <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                     {
                         reviewsData.map((item,ind)=> (
                             <div key={ind} className="border border-(--light-color)/70 bg-(--light-color)/20 p-2 rounded-md flex flex-col justify-center items-center gap-2 duration-200 delay-200 ease-linear hover:-rotate-12">

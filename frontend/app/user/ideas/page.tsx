@@ -6,14 +6,16 @@ import ComparisionIdeaModal from "@/app/ui/Modals/comparisionIdea";
 import CreateIdeaModal from "@/app/ui/Modals/createIdea";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
+import { toPng } from "html-to-image";
 import { useSession } from "next-auth/react";
-import { useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import toast from "react-hot-toast";
-import { FaPencilAlt, FaTrash } from "react-icons/fa";
+import { FaFileImage, FaPencilAlt, FaTrash } from "react-icons/fa";
 import { TbMoodEmptyFilled } from "react-icons/tb";
 
 export default function UserIdeas() {
 
+    const divRefs = useRef<Record<string, HTMLDivElement | null>>({});
     const [aiComparision, setAiComparision] = useState<boolean>(false);
     const [createModal, setCreateModal] = useState<boolean>(false);
 
@@ -126,6 +128,19 @@ export default function UserIdeas() {
         return checkExist ? true : false;
     }
 
+    const handleDownloadImage = useCallback((id: string) => {
+            const ref = divRefs.current[id];
+            if (!ref) return;
+    
+            toPng(ref, { cacheBust: true })
+                .then((dataUrl) => {
+                    const link = document.createElement('a');
+                    link.download = `idea-${id}.png`;
+                    link.href = dataUrl;
+                    link.click();
+                })
+        }, []);
+
 
     return (
         <>
@@ -190,7 +205,10 @@ export default function UserIdeas() {
                         <div className="w-full mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
                             {
                                 ideaData?.map((ele: ideaDataType) => (
-                                    <div key={ele._id} className="p-2 animate__animated animate__zoomIn self-start border border-dashed border-(--light-color) bg-(--light-color)/30 rounded-md">
+                                    <div 
+                                    ref={(el) => { divRefs.current[ele._id] = el; }}
+                                    key={ele._id} 
+                                    className="p-2 animate__animated animate__zoomIn self-start border border-dashed border-(--light-color) bg-[rgb(255,210,249)] rounded-md">
                                         <input
                                             disabled={aiComparision || fetchLoading}
                                             onChange={(e) => updateIdeaData('heading', e.target.value, ele._id)}
@@ -236,6 +254,13 @@ export default function UserIdeas() {
                                                 title="Delete Idea"
                                                 className={`px-5 ${(aiComparision || fetchLoading) ? 'bg-red-500/50 cursor-not-allowed' : 'bg-red-500 cursor-pointer'} py-2 rounded-md text-sm text-white`}>
                                                 <FaTrash />
+                                            </button>
+                                            <button 
+                                                disabled={fetchLoading}
+                                                onClick={()=> handleDownloadImage(ele._id)} 
+                                                title="Download as Image" 
+                                                className="text-2xl hover:text-(--dark-color) cursor-pointer">
+                                                <FaFileImage />
                                             </button>
                                         </div>
                                     </div>

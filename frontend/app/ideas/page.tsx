@@ -3,16 +3,18 @@
 import { ResponseType } from "@/app/lib/userDataType/userType";
 import ComparisionIdeaModal from "@/app/ui/Modals/comparisionIdea";
 import axios from "axios";
-import { useState } from "react";
-import { FaPencilAlt } from "react-icons/fa";
+import { useCallback, useRef, useState } from "react";
+import { FaFileImage, FaPencilAlt } from "react-icons/fa";
 import { IoIosTime } from "react-icons/io";
 import { TbMoodEmptyFilled } from "react-icons/tb";
 import { ideaPublicDataType } from "../lib/ideaDataType/ideaType";
 import Image from "next/image";
 import { useQuery } from "@tanstack/react-query";
+import { toPng } from "html-to-image";
 
 export default function PublicIdeas() {
 
+    const divRefs = useRef<Record<string, HTMLDivElement | null>>({});
     const [aiComparision, setAiComparision] = useState<boolean>(false);
     const [comparisionModal, setComparisionModal] = useState<boolean>(false);
 
@@ -47,6 +49,19 @@ export default function PublicIdeas() {
         const checkExist = data.find((ele) => ele.id === id);
         return checkExist ? true : false;
     }
+
+    const handleDownloadImage = useCallback((id: string) => {
+        const ref = divRefs.current[id];
+        if (!ref) return;
+
+        toPng(ref, { cacheBust: true })
+            .then((dataUrl) => {
+                const link = document.createElement('a');
+                link.download = `idea-${id}.png`;
+                link.href = dataUrl;
+                link.click();
+            })
+    }, []);
 
 
     return (
@@ -106,11 +121,17 @@ export default function PublicIdeas() {
                         <div className="w-full mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
                             {
                                 ideaData?.map((ele: ideaPublicDataType) => (
-                                    <div key={ele._id} className="p-2 animate__animated animate__zoomIn self-start border relative border-(--light-color) bg-(--light-color)/25 rounded-md">
+                                    <div
+                                        ref={(el) => { divRefs.current[ele._id] = el; }}
+                                        key={ele._id}
+                                        className="p-2 animate__animated animate__zoomIn self-start border relative border-(--light-color) bg-[rgb(255,210,249)] rounded-md">
 
                                         <p className="text-xl text-(--dark-color) font-bold">{ele.heading}</p>
                                         <p className="text-slate-700 text-sm whitespace-pre-wrap">{ele.content}</p>
-                                        <span className="bg-white border border-slate-300 py-1 px-3 text-sm rounded-full">{ele.category}</span>
+                                        <div className="w-full flex justify-start items-center gap-5">
+                                            <p className="bg-white border border-slate-300 py-1 px-3 text-sm rounded-full">{ele.category}</p>
+                                            <button onClick={()=> handleDownloadImage(ele._id)} title="Download as Image" className="text-xl hover:text-(--dark-color) cursor-pointer"><FaFileImage /></button>
+                                        </div>
                                         <div className="flex items-center justify-between gap-4 text-sm mt-2">
                                             <p className="flex items-center gap-1"><IoIosTime /> {ele.createdAt.split('T')[0]}</p>
                                             <p className="flex items-center gap-1"><FaPencilAlt /> {ele.updatedAt.split('T')[0]}</p>

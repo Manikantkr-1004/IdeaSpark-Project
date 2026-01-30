@@ -6,9 +6,6 @@ It addresses real-world problems like creative block, scattered idea storage, an
 * https://ideasparkmani.vercel.app
 * https://ideasparkapi.onrender.com
 
-> [!NOTE]
-> Our backend is hosted on a free tier Render account, which causes it to spin down after inactivity. This may result in up to a 1-minute delay on the first API call, affecting the frontend load time first time only once. Please wait briefly— this is expected behavior and not an issue that's why I have added a Loader to make it smooth and looks good.
-
 <img style="margin: 0 auto;" width="742" height="464" alt="homepage" src="https://github.com/user-attachments/assets/ccab69ba-1146-4b9a-a613-4deb4474823e" />
 
 ---
@@ -18,7 +15,8 @@ It addresses real-world problems like creative block, scattered idea storage, an
 Frontend
 
 * Next.js with Typescript
-* Context API (State Management)
+* Tanstack React-query
+* NextAuth 5
 * Tailwind CSS
 
 Backend
@@ -39,17 +37,16 @@ AI Integration (HuggingFace API - Free Tier - Short Prompt Usage)
 
 **Key Features**
 
-* User Authentication (Signup, Login, Forgot Password)
-* Secure JWT-based authentication
+* User Authentication (Signup & Login via Google/Github, Google One Tap Login, Forgot Password)
+* Secure NextAuth & JWT-based authentication
 * Protected Routes for authenticated users
 * Create, Read, Update, Delete (CRUD) Ideas
-* Public & Private Idea Visibility
+* Download Ideas that you loved as Image too
 * AI-powered Idea Generation with raw thoughts
 * AI-powered Idea Comparision with 2 ideas
 * Explore Public Ideas shared by other users
-* User Profile Page
+* User Profile Page with Login History
 * Clean and responsive UI
-* Real-world focused problem-solving approach (creative block & idea validation)
 
 ---
 
@@ -90,11 +87,7 @@ Install dependencies:
 npm install
 ```
 
-Create a `.env` file and add required environment variables:
-
-```
-NEXT_PUBLIC_BACKEND_URL=
-```
+Create a `.env.local` file and add necessary environment variables.
 
 Start the development server:
 
@@ -118,16 +111,7 @@ Install dependencies:
 npm install
 ```
 
-Create a `.env` file and configure environment variables:
-
-```
-JWT_SECRET=
-SALT_ROUNDS=
-CLIENT_URL=
-AI_URL=
-AI_API_KEY=
-MONGODB_URI=
-```
+Create a `.env` file and add necessary environment variables.
 
 Start the backend server:
 

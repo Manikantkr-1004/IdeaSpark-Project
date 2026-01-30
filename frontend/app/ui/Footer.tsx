@@ -37,7 +37,7 @@ export default function Footer() {
                 </div>
                 <div className="w-full lg:w-1/3 md:w-1/2">
                     <h2 className="text-(--light-color) flex items-center gap-1 font-semibold text-lg mb-2">Explore Links</h2>
-                        <ul className="list-disc list-inside">
+                    <ul className="flex flex-col gap-1">
                         <li>
                             <Link className="text-white hover:text-(--light-color)" href={'/'}>Home</Link>
                         </li>
@@ -47,7 +47,7 @@ export default function Footer() {
                     </ul>
                 </div>
             </div>
-            <hr className="my-2 text-(--light-color)" />
+            <hr className="my-6 text-(--light-color)/50" />
             <p className="text-center text-white text-sm">&copy; {currentYear} IdeaSpark. All rights reserved.</p>
         </footer>
         </>
