@@ -91,8 +91,8 @@ export default function LoginClient() {
                 </div>
                 
                 <div className="w-full flex flex-col gap-2">
-                    <button onClick={()=> signIn('google')} type="button" className="w-full border border-slate-700 bg-white hover:bg-white/80 rounded-md font-semibold text-sm py-2 cursor-pointer"><Image src="https://authjs.dev/img/providers/google.svg" alt="Google" width={20} height={20} className="inline mr-2" /> Continue with Google</button>
-                    <button onClick={()=> signIn('github')} type="button" className="w-full border border-slate-700 bg-white hover:bg-white/80 rounded-md font-semibold text-sm py-2 cursor-pointer"><Image src="https://authjs.dev/img/providers/github.svg" alt="Github" width={20} height={20} className="inline mr-2" /> Continue with Github</button>
+                    <button onClick={()=> signIn('google')} type="button" className="w-full border border-slate-700 bg-white hover:bg-(--dark-color) hover:text-white rounded-md font-semibold text-sm py-2 cursor-pointer"><Image src="https://authjs.dev/img/providers/google.svg" alt="Google" width={20} height={20} className="inline mr-2" /> Continue with Google</button>
+                    <button onClick={()=> signIn('github')} type="button" className="w-full border border-slate-700 bg-white hover:bg-(--dark-color) hover:text-white rounded-md font-semibold text-sm py-2 cursor-pointer"><Image src="https://authjs.dev/img/providers/github.svg" alt="Github" width={20} height={20} className="inline mr-2" /> Continue with Github</button>
                 </div>
 
                 <p className="text-xs text-center">Have not account? <Link className="text-(--light-color)" href={'/account/register'}>Register now</Link></p>

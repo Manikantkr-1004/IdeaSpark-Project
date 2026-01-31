@@ -41,17 +41,23 @@ export default function GoogleOneTap() {
   }, [status]);  
 
   const handleCredentialResponse = async (response: any) => {
-    // ✅ Use "google-one-tap" provider (not "google")
+    // ✅ Using "google-one-tap" provider
+    const toastId = toast.loading("Signing in with Google...");
+
     const result = await signIn("google-one-tap", {
       credential: response.credential,
       redirect: false,
     });
+    toast.dismiss(toastId);
+
     if (result?.error) {
       toast.error("Google One Tap sign-in failed.");
     }
     if(result?.ok){
       toast.success("Login Successful!");
-      router.replace('/');
+      const params = new URLSearchParams(window.location.search);
+      const redirectTo = params.get("redirectTo") || "/";
+      router.replace(redirectTo);
     }
   };
 
